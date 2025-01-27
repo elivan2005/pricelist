@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html class="h-full">
+
+<head>
+  <meta charset="utf8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+
+  <title>ЕЛИВАН Ценоразпис</title>
+
+  <!-- <link rel="icon"
+    href="https://avatars0.githubusercontent.com/u/30749236?s=400&u=c0af321f891fb3e9799df6190122805c7cd6685d&v=4" /> -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" /> -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /> -->
+  <!-- <link rel="stylesheet" href="app/css/tw.css" /> -->
+  <!-- <link rel="stylesheet" href="app/css/style.css" /> -->
+
+  <!-- <script type="module" src="main.js"></script> -->
+
+  <!-- handle relics -->
+  <script nomodule>window.location = "update.html"</script>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=update.html">
+  </noscript>
+
+  <style>
+    th, td { border-bottom: solid 1px lightgray; padding: 5px 10px; }
+    th { font-size: 150%; font-weight: bold; padding: 20px 0; }
+  </style>
+</head>
+
+<body class="h-full" style="background: #f1f1f1; color: #333">
+  <div style="text-align: center; padding-top: 1%; font-size: 110%; font-family: sans-serif;">
+    <h1 style="margin-top: 1%; font-size: 200%; font-weight: bold;">
+      Еливан
+    </h1>
+    <p>Ценоразпис</p>
+  </div>
+
+  <div id="search" style="text-align: center; margin-top: 10%;">
+    <div style="position: relative; display: inline-block;">
+      <span style="position: absolute; top: 6px; left: 8px;">🔍</span>
+      <input style="padding: 5px 10px 5px 30px" placeholder="Търси" oninput="search(this.value)"/>
+    </div>
+  </div>
+
+  <div id="price-list" style="display: flex;"></div>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="luri.js"></script>
+  <script>
+    function parseExcel(file) {
+      var reader = new FileReader();
+            reader.onload = function() {
+                var arrayBuffer = this.result,
+                    array = new Uint8Array(arrayBuffer),
+                    binaryString = String.fromCharCode.apply(null, array);
+                /* set up XMLHttpRequest */
+                // var url = "http://myclassbook.org/wp-content/uploads/2017/12/Test.xlsx";
+                // var oReq = new XMLHttpRequest();
+                // oReq.open("GET", url, true);
+                // oReq.responseType = "arraybuffer";
+
+                // oReq.onload = function(e) {
+                // var arraybuffer = oReq.response;
+
+                /* convert data to binary string */
+                // var data = new Uint8Array(arraybuffer);
+                // var arr = new Array();
+                // for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                // var bstr = arr.join("");
+
+                /* Call XLSX */
+                var workbook = XLSX.read(binaryString, {
+                    type: "binary"
+                });
+
+                /* DO SOMETHING WITH workbook HERE */
+                var first_sheet_name = workbook.SheetNames[0];
+                /* Get worksheet */
+                var worksheet = workbook.Sheets[first_sheet_name];
+                createTable(XLSX.utils.sheet_to_json(worksheet, {
+                    raw: true
+                }));
+                // }
+
+                // oReq.send();
+            }
+            reader.readAsArrayBuffer(file);
+    }
+
+    function createTable(data) {
+      let cols = ["Продукт", "Цена"];
+
+      luri.append({
+        node: "table",
+        style: "width: 100%; text-align: center; margin-top: 2%;",
+        html: [
+          luri.THEAD(cols.map(luri.TH)),
+          luri.TBODY(data.map(row => luri.TR([
+            luri.TD(row[cols[0]]),
+            luri.TD(row[cols[1]].toFixed(2) + " лв.")
+          ])))
+        ]
+      }, document.getElementById("price-list"));
+    }
+
+    fetch("pricelist.xls").then(resp => resp.blob()).then(blob => {
+      parseExcel(new File([blob], "pricelist.xls"));
+    })
+
+    function search(term) {
+      Array.from(document.getElementsByTagName("tr")).map(tr => {
+        if (term) {
+          if (tr.children[0].textContent.search(term) < 0) {
+            tr.style.display = "none";
+          }
+        } else {
+          tr.style.display = "table-row";
+        }
+      });
+    }
+  </script>
+
+</body>
+
+</html>
