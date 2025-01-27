@@ -18,11 +18,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
         
-      - name: Update Issue
+      - name: Replace file
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Replace file
         run: |
             # Mark file as sold
             echo "{{ inputs.pricelist }}" | base64 --decode > pricelist.txt
