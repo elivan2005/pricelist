@@ -1,0 +1,35 @@
+# This is a basic workflow that is manually triggered
+
+name: update-pricelist
+
+on:
+  workflow_dispatch:
+    inputs:
+      pricelist:
+        required: true
+        # base64 xls file
+        type: string
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Update Issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Replace file
+        run: |
+            # Mark file as sold
+            echo "{{ inputs.pricelist }}" | base64 --decode > pricelist.txt
+          
+            # Commit and push the changes
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add "$file"
+            git commit -m "Update pricelist"
+            git push origin HEAD:${{ github.ref }}
