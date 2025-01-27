@@ -29,6 +29,6 @@ jobs:
             # Commit and push the changes
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
-            git add "$file"
+            git add .
             git commit -m "Update pricelist"
             git push origin HEAD:${{ github.ref }}
