@@ -26,8 +26,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             # Mark file as sold
-            echo "${{ inputs.pricelist }}"
-            echo "${{ inputs.pricelist }}" | base64 --decode > pricelist.txt
+            echo "${{ inputs.pricelist }}" | base64 --decode > pricelist.xls
           
             # Commit and push the changes
             git config --local user.email "action@github.com"
