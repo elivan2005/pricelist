@@ -40,7 +40,7 @@
   <div id="search" style="text-align: center; margin-top: 10%;">
     <div style="position: relative; display: inline-block;">
       <span style="position: absolute; top: 6px; left: 8px;">🔍</span>
-      <input style="padding: 5px 10px 5px 30px" placeholder="Търси" oninput="search(this.value)"/>
+      <input style="padding: 5px 10px 5px 30px" placeholder="Търси" oninput="search(this.value)" onkeypress="keypress(event)"/>
     </div>
   </div>
 
@@ -118,7 +118,36 @@
       parseExcel(new File([blob], "pricelist.xls"));
     })
 
+
+    var enters = 0;
+
+    function keypress(event) {
+      if (event.key === "Enter") {
+        enters++;
+        if (enters === 5) {
+          enters = 0;
+          fetch("https://api.github.com/repos/elivan2005/pricelist/readme", {
+            headers: {
+              Accept: "application/vnd.github+json",
+              Authorization: "Bearer " + event.target.value,
+              "X-GitHub-Api-Version": "2022-11-28"
+            }
+          }).then(resp => resp.json()).catch(err => err).then(json => {
+            json = json || {};
+            
+            if (!json.name || json.status == "401") {
+              return alert("Грешка, опитай отново.");
+            }
+
+            localStorage.elivanToken = event.target.value;
+            location.reload(true);
+          })
+        }
+      }
+    }
+
     function search(term) {
+      enters = 0;
       term = (term || "").toLowerCase()
       Array.from(document.getElementsByTagName("tr")).map(tr => {
         if (term) {
