@@ -53,6 +53,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="luri.js"></script>
   <script>
+    var XLSCB = "2025-01-30 20:40:39";
+
     if (localStorage.elivanToken) {
       document.getElementById("upload").style.display = "block"
     }
@@ -100,13 +102,15 @@
     function createTable(data) {
       console.log(data);
       let cols = ["Продукт", "Цена"];
+      let labels = ["№", "Продукт", "Цена"];
 
       luri.append({
         node: "table",
         style: "width: 100%; text-align: center; margin-top: 2%;",
         html: [
-          luri.THEAD(cols.map(luri.TH)),
-          luri.TBODY(data.map(row => luri.TR([
+          luri.THEAD(labels.map(luri.TH)),
+          luri.TBODY(data.map((row, index) => luri.TR([
+            luri.TD(index + 1),
             luri.TD(row[cols[0]]),
             luri.TD(row[cols[1]] ? (row[cols[1]].toFixed(2) + " лв.") : "")
           ])))
@@ -114,7 +118,7 @@
       }, document.getElementById("price-list"));
     }
 
-    fetch("pricelist.xls").then(resp => resp.blob()).then(blob => {
+    fetch("pricelist.xls?v=" + XLSCB).then(resp => resp.blob()).then(blob => {
       parseExcel(new File([blob], "pricelist.xls"));
     })
 
@@ -160,7 +164,7 @@
       });
     }
 
-    // elivan svc acc
+    // elivansvc@gmail.com
     // nimave4185@andinews.com
     function upload(file) {
       var reader = new FileReader();
@@ -181,7 +185,12 @@
                 pricelist: base64
               }
             }) // Convert the data object to a JSON string
-        }).then(resp => resp.text()).then(console.log)
+        }).then(resp => {
+          if (resp.status == 204) {
+            return resp.text();
+          }
+          throw new Error("Response error");
+        }).catch(err => alert("Грешка, опитай отново."))
       };
       reader.onerror = function (error) {
         console.log('Error: ', error);
