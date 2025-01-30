@@ -102,7 +102,6 @@
     }
 
     function createTable(data) {
-      console.log(data);
       let cols = ["Продукт", "Цена"];
       let labels = ["№", "Продукт", "Цена"];
 
@@ -157,7 +156,7 @@
       term = (term || "").toLowerCase()
       Array.from(document.getElementsByTagName("tr")).map(tr => {
         if (term) {
-          if (tr.children[0].textContent.toLowerCase().search(term) < 0) {
+          if (tr.children[1].textContent.toLowerCase().search(term) < 0) {
             tr.style.display = "none";
           }
         } else {
