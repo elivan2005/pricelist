@@ -7,8 +7,7 @@
 
   <title>ЕЛИВАН Ценоразпис</title>
 
-  <!-- <link rel="icon"
-    href="https://avatars0.githubusercontent.com/u/30749236?s=400&u=c0af321f891fb3e9799df6190122805c7cd6685d&v=4" /> -->
+  <link rel="icon" href="logo.png" />
   <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" /> -->
   <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /> -->
   <!-- <link rel="stylesheet" href="app/css/tw.css" /> -->
@@ -58,7 +57,8 @@
     var XLSCB = "2025-01-30 19:08:07";
 
     if (localStorage.elivanToken) {
-      document.getElementById("upload").style.display = "block"
+      document.getElementById("upload").style.display = "block";
+      XLSCB = Date.now();
     }
 
     function parseExcel(file) {
@@ -141,7 +141,7 @@
           }).then(resp => resp.json()).catch(err => err).then(json => {
             json = json || {};
             
-            if (!json.name || json.status == "401") {
+            if (json.name !== "README.md" || json.status == "401") {
               return alert("Грешка, опитай отново.");
             }
 
