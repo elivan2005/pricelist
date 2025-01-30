@@ -25,8 +25,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            # Mark file as sold
+            # install xls
             echo "${{ inputs.pricelist }}" | base64 --decode > pricelist.xls
+
+            # update cb
+            sed -i "s|var XLSCB = \".*\";|var XLSCB = \"$(date +'%Y-%m-%d %H:%M:%S')\";|" index.html
           
             # Commit and push the changes
             git config --local user.email "action@github.com"
