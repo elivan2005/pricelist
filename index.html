@@ -92,7 +92,8 @@
         /* Get worksheet */
         var worksheet = workbook.Sheets[first_sheet_name];
         createTable(XLSX.utils.sheet_to_json(worksheet, {
-            raw: true
+          header: 1,
+            // raw: true 
         }));
         // }
 
@@ -102,8 +103,7 @@
     }
 
     function createTable(data) {
-      let cols = ["Продукт", "Цена"];
-      let labels = ["№", "Продукт", "Цена"];
+      let labels = ["№", "Продукт", "Мерна ед.", "Цена"];
 
       luri.append({
         node: "table",
@@ -112,8 +112,9 @@
           luri.THEAD(labels.map(luri.TH)),
           luri.TBODY(data.map((row, index) => luri.TR([
             luri.TD(index + 1),
-            luri.TD(row[cols[0]]),
-            luri.TD(row[cols[1]] ? (row[cols[1]].toFixed(2) + " лв.") : "")
+            luri.TD(row[0]),
+            luri.TD(row[1]),
+            luri.TD(row[2] ? (row[2].toFixed(2) + " лв.") : "")
           ])))
         ]
       }, document.getElementById("price-list"));
@@ -170,21 +171,34 @@
     function upload(file) {
       var reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = function () {
+      reader.onload = async function () {
         let base64 = reader.result.replace(/^data:application\/[^;]*;base64,/, "");
+
+        let sha = (await (await fetch("https://api.github.com/repos/elivan2005/pricelist/contents/pricelist.xls", {
+          headers: {
+            Accept: "application/vnd.github+json",
+            Authorization: "Bearer " + localStorage.elivanToken,
+            "X-GitHub-Api-Version": "2022-11-28"
+          }
+        })).json()).sha;
         
-        fetch("https://api.github.com/repos/elivan2005/pricelist/actions/workflows/update-pricelist.yml/dispatches", {
-            method: 'POST', // Specify the request method
+        // fetch("https://api.github.com/repos/elivan2005/pricelist/actions/workflows/update-pricelist.yml/dispatches", {
+        //   method: 'POST', // Specify the request method
+        fetch("https://api.github.com/repos/elivan2005/pricelist/contents/pricelist.xls", {
+            method: 'PUT', // Specify the request method
             headers: {
               Accept: "application/vnd.github+json",
               Authorization: "Bearer " + localStorage.elivanToken,
               "X-GitHub-Api-Version": "2022-11-28"
             },
             body: JSON.stringify({
-              ref: "main",
-              inputs: {
-                pricelist: base64
-              }
+              // ref: "main",
+              // inputs: {
+              //   pricelist: base64
+              // }
+              message: "Update pricelist",
+              content: base64,
+              sha: sha
             }) // Convert the data object to a JSON string
         }).then(resp => {
           if (resp.status == 204) {
