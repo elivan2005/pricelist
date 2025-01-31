@@ -44,8 +44,8 @@
   </div>
 
   <input style="display: none; margin: 0 auto; margin-top: 20px;" id="upload" type="file" oninput="upload(this.files[0])"/>
-
-  <div id="price-list" style="display: flex;"></div>
+  
+  <div id="price-list" style="overflow-x:auto; text-align: center;"><br/><br/><br/>Зареждане, моля изчакайте..</div>
 
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script> -->
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.js"></script> -->
@@ -105,6 +105,8 @@
     function createTable(data) {
       let labels = ["№", "Продукт", "Мерна ед.", "Цена"];
 
+      document.getElementById("price-list").innerHTML = "";
+      
       luri.append({
         node: "table",
         style: "width: 100%; text-align: center; margin-top: 2%;",
