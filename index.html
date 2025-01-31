@@ -201,7 +201,8 @@
               sha: sha
             }) // Convert the data object to a JSON string
         }).then(resp => {
-          if (resp.status == 204) {
+          // if (resp.status == 204) {
+          if (resp.status == 200) {
             return alert("Файла е качен. Промените ще са видими след около 5 мин.");
           }
           throw new Error("Response error");
